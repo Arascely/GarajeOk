@@ -1,19 +1,19 @@
-// tests/login.spec.js
 const { login } = require('../src/services/login.service');
-const bcrypt = require('bcryptjs');
 
 describe('TDD - Módulo de Login (GarajeOk)', () => {
 
-    const hashReal = bcrypt.hashSync('admin123', 10); // hash válido para las pruebas
+    // === HASH REAL ESTÁTICO ===
+    // Generado previamente para la contraseña "admin123". No calculamos al vuelo para optimizar.
+    const HASH_ESTATICO_ADMIN123 = "$2b$10$dTXbNldzu/kZ0pMiHwI.iexkdCum1CBd.cy/Hy2V3SgvlM6Oa.HX2";
 
     const usuarioMock = {
         id: 1,
         username: 'admin',
         rol: 'Administrador',
-        passwordHash: hashReal
+        passwordHash: HASH_ESTATICO_ADMIN123
     };
 
-    test('Rojo: Debe generar token si la contraseña es correcta', () => {
+    test('Verde: Debe generar token si la contraseña es correcta usando hash estático', () => {
         const resultado = login(usuarioMock, 'admin123');
 
         expect(resultado.exito).toBe(true);
@@ -21,7 +21,7 @@ describe('TDD - Módulo de Login (GarajeOk)', () => {
         expect(resultado.token.split('.').length).toBe(3);
     });
 
-    test('Rojo: NO debe generar token si la contraseña es incorrecta', () => {
+    test('Verde: NO debe generar token si la contraseña es incorrecta', () => {
         const resultado = login(usuarioMock, 'claveFalsa');
 
         expect(resultado.exito).toBe(false);
