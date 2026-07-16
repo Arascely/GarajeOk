@@ -8,6 +8,12 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
+// Importar rutas de autenticación
+const authRoutes = require('./src/routes/auth.routes');
+const parkingRoutes = require('./src/routes/parking.routes');
+
+//Ruteador de Express para manejar las rutas de autenticación y de parking
+app.use('/api/auth', authRoutes);
 app.use('/api/parking', parkingRoutes);
 
 // Ruta de diagnóstico simple
@@ -22,5 +28,5 @@ app.get('/test-db', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`🚀 Servidor de GarajeOk corriendo en http://localhost:${PORT}`);
+    console.log(`Servidor de GarajeOk corriendo en http://localhost:${PORT}`);
 });
