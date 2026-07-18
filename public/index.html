@@ -29,21 +29,63 @@
             <span class="kicker">Sistema de Gestión de Estacionamiento</span>
             <h1 class="wordmark">GarajeOk</h1>
             <div class="rule-doble"></div>
-            <p class="masthead-sub">Acceso de operadores</p>
         </div>
 
         <div id="loginAlert" class="alert alert-danger hidden"></div>
-        <form id="loginForm">
-            <div class="form-group">
-                <label>Usuario Operador:</label>
-                <input type="text" id="username" required placeholder="Ej: admin">
-            </div>
-            <div class="form-group">
-                <label>Contraseña:</label>
-                <input type="password" id="password" required placeholder="••••••••">
-            </div>
-            <button type="submit" class="btn">Ingresar al Sistema</button>
-        </form>
+
+        <!-- FORMULARIO 1: ACCESO -->
+        <div id="formAccesoSeccion">
+            <p class="masthead-sub">Acceso de operadores</p>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Usuario Operador:</label>
+                    <input type="text" id="username" required placeholder="Ej: admin">
+                </div>
+                <div class="form-group">
+                    <label>Contraseña:</label>
+                    <input type="password" id="password" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn">Ingresar al Sistema</button>
+            </form>
+            <p class="enlace-alternar-texto">
+                ¿No tienes cuenta?
+                <a href="#" onclick="document.getElementById('loginAlert').classList.add('hidden'); alternarFormularios(true); return false;" class="enlace-alternar enlace-alternar--registro">Regístrate aquí</a>
+            </p>
+        </div>
+
+        <!-- FORMULARIO 2: REGISTRO NUEVO -->
+        <div id="formRegistroSeccion" class="hidden">
+            <p class="masthead-sub">Crear Nueva Cuenta de Operador</p>
+            <form id="registroForm">
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label>Nombres:</label>
+                        <input type="text" id="regNombres" required placeholder="Juan">
+                    </div>
+                    <div class="form-group">
+                        <label>Apellidos:</label>
+                        <input type="text" id="regApellidos" required placeholder="Pérez">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Correo Electrónico (Gmail):</label>
+                    <input type="email" id="regEmail" required placeholder="ejemplo@gmail.com">
+                </div>
+                <div class="form-group">
+                    <label>Nombre de Usuario:</label>
+                    <input type="text" id="regUsername" required placeholder="juan123">
+                </div>
+                <div class="form-group">
+                    <label>Contraseña (Mínimo 1 Mayúscula y 1 Número):</label>
+                    <input type="password" id="regPassword" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn btn-success">Crear Cuenta y Enviar Confirmación</button>
+            </form>
+            <p class="enlace-alternar-texto">
+                ¿Ya tienes cuenta?
+                <a href="#" onclick="document.getElementById('loginAlert').classList.add('hidden'); alternarFormularios(false); return false;" class="enlace-alternar enlace-alternar--login">Inicia sesión</a>
+            </p>
+        </div>
     </div>
 
     <!-- VISTA 2: APLICACIÓN PRINCIPAL -->
@@ -174,11 +216,24 @@
             localStorage.setItem('garajeok-theme', nuevo);
         }
 
+        // Alternar entre el formulario de acceso y el de registro
+        function alternarFormularios(mostrarRegistro) {
+            if (mostrarRegistro) {
+                document.getElementById('formAccesoSeccion').classList.add('hidden');
+                document.getElementById('formRegistroSeccion').classList.remove('hidden');
+            } else {
+                document.getElementById('formRegistroSeccion').classList.add('hidden');
+                document.getElementById('formAccesoSeccion').classList.remove('hidden');
+            }
+        }
+
         // Manejo de Login
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const alertBox = document.getElementById('loginAlert');
-            alertBox.classList.add('hidden');
+            // Se reinicia la clase completa (no solo "hidden"), para no heredar
+            // el color verde de un mensaje de éxito de registro previo.
+            alertBox.className = 'alert alert-danger hidden';
 
             try {
                 const response = await fetch(`${API_URL}/auth/login`, {
@@ -199,6 +254,37 @@
             } catch (err) {
                 alertBox.textContent = err.message;
                 alertBox.classList.remove('hidden');
+            }
+        });
+
+        // Manejo de Registro de cuenta
+        document.getElementById('registroForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const alertBox = document.getElementById('loginAlert');
+            alertBox.className = 'alert alert-danger hidden';
+
+            try {
+                const response = await fetch(`${API_URL}/auth/registro`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        nombres: document.getElementById('regNombres').value,
+                        apellidos: document.getElementById('regApellidos').value,
+                        email: document.getElementById('regEmail').value,
+                        username: document.getElementById('regUsername').value,
+                        password: document.getElementById('regPassword').value
+                    })
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || "Error en el registro");
+
+                alertBox.className = 'alert alert-success';
+                alertBox.textContent = data.message;
+                document.getElementById('registroForm').reset();
+                alternarFormularios(false);
+            } catch (err) {
+                alertBox.className = 'alert alert-danger';
+                alertBox.textContent = err.message;
             }
         });
 
