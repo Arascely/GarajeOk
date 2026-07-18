@@ -1,0 +1,345 @@
+<!-- public/index.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GarajeOk - Sistema de Gestión de Estacionamiento</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --dark: #1f2937;
+            --light: #f3f4f6;
+            --white: #ffffff;
+            --gray: #9ca3af;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--light); color: var(--dark); min-height: 100vh; }
+        .hidden { display: none !important; }
+        
+        /* Contenedor de Login */
+        .login-container { max-width: 400px; margin: 100px auto; padding: 30px; background: var(--white); border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .login-container h2 { text-align: center; margin-bottom: 20px; color: var(--primary); }
+        
+        /* App Layout */
+        header { background: var(--primary); color: var(--white); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .logout-btn { background: rgba(255,255,255,0.2); color: var(--white); border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
+        .logout-btn:hover { background: rgba(255,255,255,0.3); }
+        
+        .main-layout { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; padding: 20px; max-width: 1200px; margin: 0 auto; }
+        .card { background: var(--white); padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .card h3 { margin-bottom: 15px; border-bottom: 2px solid var(--light); padding-bottom: 5px; color: var(--primary); }
+        
+        /* Formularios y Inputs */
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid var(--gray); border-radius: 4px; }
+        .btn { width: 100%; padding: 12px; background: var(--primary); color: var(--white); border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 16px; }
+        .btn:hover { background: var(--primary-dark); }
+        .btn-success { background: var(--success); }
+        .btn-success:hover { background: #15803d; }
+        
+        /* Indicadores de Aforo */
+        .aforo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; }
+        .aforo-box { padding: 15px; border-radius: 6px; background: var(--light); border-left: 5px solid var(--primary); }
+        .aforo-box.camion { border-left-color: #f59e0b; }
+        .aforo-box.trailer { border-left-color: #7c3aed; }
+        .aforo-box h4 { font-size: 12px; text-transform: uppercase; color: var(--gray); }
+        .aforo-box p { font-size: 22px; font-weight: bold; margin-top: 5px; }
+
+        /* Tickets Simulación */
+        .ticket-view { background: #fffde7; border: 1px dashed #f59e0b; padding: 15px; border-radius: 4px; font-family: monospace; }
+        .ticket-header { text-align: center; font-weight: bold; margin-bottom: 10px; }
+        .ticket-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        
+        .alert { padding: 10px; border-radius: 4px; margin-bottom: 15px; font-size: 14px; font-weight: bold; }
+        .alert-danger { background: #ffeeee; color: var(--danger); border: 1px solid #fca5a5; }
+        .alert-success { background: #eeffee; color: var(--success); border: 1px solid #86efac; }
+    </style>
+</head>
+<body>
+
+    <!-- VISTA 1: LOGIN -->
+    <div id="loginView" class="login-container">
+        <h2>GarajeOk Login</h2>
+        <div id="loginAlert" class="alert alert-danger hidden"></div>
+        <form id="loginForm">
+            <div class="form-group">
+                <label>Usuario Operador:</label>
+                <input type="text" id="username" required placeholder="Ej: admin">
+            </div>
+            <div class="form-group">
+                <label>Contraseña:</label>
+                <input type="password" id="password" required placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn">Ingresar al Sistema</button>
+        </form>
+    </div>
+
+    <!-- VISTA 2: APLICACIÓN PRINCIPAL -->
+    <div id="appView" class="hidden">
+        <header>
+            <h2>🚗 Panel GarajeOk (Módulos 1-7)</h2>
+            <div>
+                <span id="userDisplay" style="margin-right: 15px; font-weight: bold;"></span>
+                <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+            </div>
+        </header>
+
+        <main class="main-layout">
+            <!-- COLUMNA IZQUIERDA: CONTROL Y AFORO -->
+            <div>
+                <div class="card">
+                    <h3>📊 Estado de Aforo (Límites)</h3>
+                    <div class="aforo-grid">
+                        <div class="aforo-box carro">
+                            <h4>Carros</h4>
+                            <p id="countCarro">0 / 4</p>
+                        </div>
+                        <div class="aforo-box camion">
+                            <h4>Camiones</h4>
+                            <p id="countCamion">0 / 6</p>
+                        </div>
+                        <div class="aforo-box trailer">
+                            <h4>Tráilers</h4>
+                            <p id="countTrailer">0 / 13</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>🧾 Comprobante de Operación</h3>
+                    <div id="ticketContainer" class="ticket-view">
+                        <p style="text-align: center; color: var(--gray);">Realice un ingreso o salida para emitir ticket.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLUMNA DERECHA: PROCESOS OPERATIVOS -->
+            <div>
+                <div id="processAlert" class="alert hidden"></div>
+
+                <!-- INGRESO VEHICULO -->
+                <div class="card">
+                    <h3>📥 Registrar Ingreso (TDD Capacidad)</h3>
+                    <form id="ingresoForm">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div class="form-group">
+                                <label>Placa Vehículo:</label>
+                                <input type="text" id="ingresoPlaca" placeholder="ABC-123" required oninput="simularSunarp(this.value)">
+                            </div>
+                            <div class="form-group">
+                                <label>Tipo de Vehículo:</label>
+                                <select id="ingresoTipo" required>
+                                    <option value="carro">Carro</option>
+                                    <option value="camion">Camión</option>
+                                    <option value="trailer">Tráiler</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="color: var(--success); font-size: 13px; font-weight: bold; margin-bottom: 10px;" id="sunarpMsg"></div>
+                        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 10px;">
+                            <div class="form-group">
+                                <label>DNI Cliente:</label>
+                                <input type="text" id="clienteDni" placeholder="8 dígitos" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Nombres Completos:</label>
+                                <input type="text" id="clienteNombre" placeholder="Nombre Apellido" required>
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div class="form-group">
+                                <label>Casillero Código:</label>
+                                <input type="text" id="espacioCodigo" placeholder="Ej: A1" required>
+                            </div>
+                            <div class="form-group">
+                                <label>¿Deja Llave?</label>
+                                <select id="tieneLlave">
+                                    <option value="true">Sí, deja llave</option>
+                                    <option value="false">No deja llave</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success">Validar Capacidad y Registrar</button>
+                    </form>
+                </div>
+
+                <!-- RETIRO VEHICULO -->
+                <div class="card">
+                    <h3>📤 Registrar Salida y Liquidación (TDD Tarifas)</h3>
+                    <form id="salidaForm">
+                        <div class="form-group">
+                            <label>Placa del Vehículo a Retirar:</label>
+                            <input type="text" id="salidaPlaca" placeholder="ABC-123" required>
+                        </div>
+                        <button type="submit" class="btn" style="background: var(--dark);">Calcular Tiempo, IGV y Retirar</button>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- SCRIPT DE CONTROL FLUX APP -->
+    <script>
+        const API_URL = window.location.origin + '/api';
+        let token = localStorage.getItem('token') || '';
+
+        document.addEventListener("DOMContentLoaded", () => {
+            if (token) { showApp(); }
+        });
+
+        // Manejo de Login
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const alertBox = document.getElementById('loginAlert');
+            alertBox.classList.add('hidden');
+
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: document.getElementById('username').value,
+                        password: document.getElementById('password').value
+                    })
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || "Error de acceso");
+
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('userName', data.user.nombre);
+                token = data.token;
+                showApp();
+            } catch (err) {
+                alertBox.textContent = err.message;
+                alertBox.classList.remove('hidden');
+            }
+        });
+
+        // Simulación Mock SUNARP (Mejora de valor)
+        function simularSunarp(placa) {
+            const msg = document.getElementById('sunarpMsg');
+            if (placa.length >= 6) {
+                msg.textContent = "🔍 [SUNARP MOCK]: Vehículo detectado -> Marca: Toyota | Modelo: Probox | Color: Blanco";
+            } else {
+                msg.textContent = "";
+            }
+        }
+
+        function showApp() {
+            document.getElementById('loginView').classList.add('hidden');
+            document.getElementById('appView').classList.remove('hidden');
+            document.getElementById('userDisplay').textContent = `Operador: ${localStorage.getItem('userName')}`;
+            actualizarAforoMock();
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.reload();
+        }
+
+        // Simulación visual rápida de aforo para la sustentación
+        let ocupadosLocales = { carro: 1, camion: 2, trailer: 4 };
+        function actualizarAforoMock() {
+            document.getElementById('countCarro').textContent = `${ocupadosLocales.carro} / 4`;
+            document.getElementById('countCamion').textContent = `${ocupadosLocales.camion} / 6`;
+            document.getElementById('countTrailer').textContent = `${ocupadosLocales.trailer} / 13`;
+        }
+
+        function mostrarAlerta(mensaje, tipo) {
+            const box = document.getElementById('processAlert');
+            box.className = `alert alert-${tipo}`;
+            box.textContent = mensaje;
+            box.classList.remove('hidden');
+            setTimeout(() => box.classList.add('hidden'), 6000);
+        }
+
+        // Enviar Ingreso al Backend Protegido
+        document.getElementById('ingresoForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const tipo = document.getElementById('ingresoTipo').value;
+
+            try {
+                const response = await fetch(`${API_URL}/parking/ingreso`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        cliente_documento: document.getElementById('clienteDni').value,
+                        nombres: document.getElementById('clienteNombre').value.split(' ')[0],
+                        apellidos: document.getElementById('clienteNombre').value.split(' ')[1] || 'S/A',
+                        placa: document.getElementById('ingresoPlaca').value.toUpperCase(),
+                        tipo_vehiculo: tipo,
+                        espacio_codigo: document.getElementById('espacioCodigo').value.toUpperCase(),
+                        tiene_llave: document.getElementById('tieneLlave').value === 'true'
+                    })
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || "No se pudo registrar.");
+
+                mostrarAlerta(data.message, "success");
+                ocupadosLocales[tipo]++;
+                actualizarAforoMock();
+                renderTicket(data.ticket, "INGRESO");
+                document.getElementById('ingresoForm').reset();
+            } catch (err) {
+                mostrarAlerta(err.message, "danger");
+            }
+        });
+
+        // Enviar Salida y Liquidación Matemática
+        document.getElementById('salidaForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const placa = document.getElementById('salidaPlaca').value.toUpperCase();
+
+            try {
+                const response = await fetch(`${API_URL}/parking/salida`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ placa })
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || "Error al procesar salida");
+
+                mostrarAlerta(`Salida procesada. Total cobrado: S/. ${data.detallesCobro.total}`, "success");
+                
+                const tipoVehiculo = data.ticket.tipo_vehiculo;
+                if (ocupadosLocales[tipoVehiculo] > 0) ocupadosLocales[tipoVehiculo]--;
+                actualizarAforoMock();
+                renderTicket(data.ticket, "BOLETA DE SALIDA", data.tiempoEstadia);
+                document.getElementById('salidaForm').reset();
+            } catch (err) {
+                mostrarAlerta(err.message, "danger");
+            }
+        });
+
+        function renderTicket(tk, titulo, duracion = "N/A") {
+            const container = document.getElementById('ticketContainer');
+            container.innerHTML = `
+                <div class="ticket-header">GARAJE_OK S.A.C.</div>
+                <div class="ticket-header">${titulo}</div>
+                <hr style="border-style: dashed; margin: 8px 0;">
+                <div class="ticket-row"><span>Ticket:</span> <span>${tk.numero_ticket || 'TK-NUEVO'}</span></div>
+                <div class="ticket-row"><span>Placa:</span> <span>${tk.placa_vehiculo}</span></div>
+                <div class="ticket-row"><span>Vehículo:</span> <span>${tk.tipo_vehiculo}</span></div>
+                <div class="ticket-row"><span>Cliente:</span> <span>${tk.nombre_cliente}</span></div>
+                <div class="ticket-row"><span>Casillero:</span> <span>${tk.espacio_asignado}</span></div>
+                <hr style="border-style: dashed; margin: 8px 0;">
+                <div class="ticket-row"><span>Duración:</span> <span>${duracion}</span></div>
+                <div class="ticket-row"><span>Subtotal Neto:</span> <span>S/. ${tk.monto_subtotal || '0.00'}</span></div>
+                <div class="ticket-row"><span>IGV (18%):</span> <span>S/. ${tk.monto_igv || '0.00'}</span></div>
+                <div class="ticket-row" style="font-weight: bold;"><span>TOTAL COBRADO:</span> <span>S/. ${tk.monto_total || '0.00'}</span></div>
+            `;
+        }
+    </script>
+</body>
+</html>
