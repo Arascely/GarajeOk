@@ -218,7 +218,24 @@ body::before {
     border-bottom-color: var(--neon-verde);
 }
 
-.masthead-sub { margin-top: 14px; font-size: 13px; color: var(--texto-suave); letter-spacing: 0.03em; }
+.masthead-sub {
+    margin-top: 14px;
+    margin-bottom: 15px;
+    font-size: 13px;
+    color: var(--texto-suave);
+    letter-spacing: 0.03em;
+    text-align: center;
+}
+
+/* --- Enlaces para alternar entre acceso y registro -------------------------------- */
+.enlace-alternar-texto { text-align: center; margin-top: 20px; font-size: 13px; color: var(--texto-suave); }
+
+.enlace-alternar { font-weight: 700; text-decoration: underline; }
+.enlace-alternar--registro { color: var(--magenta-profundo); }
+.enlace-alternar--login { color: var(--verde-medio); }
+
+[data-theme="dark"] .enlace-alternar--registro { color: var(--neon-cian); }
+[data-theme="dark"] .enlace-alternar--login { color: var(--neon-verde); }
 
 .masthead--compacta { display: flex; align-items: baseline; gap: 12px; margin: 0; text-align: left; }
 
