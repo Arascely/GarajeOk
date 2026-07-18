@@ -29,8 +29,8 @@ async function iniciarSesion(req, res) {
         const usuario = resUsuario.rows[0];
 
         // 2. Usar tu servicio de login testeado (TDD) para validar
+        usuario.passwordHash = usuario.passwordHash || usuario.password_hash;
         const resultadoLogin = login(usuario, password);
-
         if (!resultadoLogin.exito) {
             return res.status(401).json({ error: resultadoLogin.mensaje });
         }
