@@ -1,42 +1,55 @@
 /* ============================================================================
-   GARAJEOK — SISTEMA DE DISEÑO
-   Dirección: masthead editorial (tipo Vogue) sobre un campo verde suave y vivo,
-   paneles en un cálido crema complementario, y acentos en degradado coral→magenta.
+   GARAJEOK — SISTEMA DE DISEÑO (v2)
+   Claro: masthead editorial sobre un campo magenta + verde suaves.
+   Oscuro: consola tipo HUD/terminal (verde neón + cian), inspirada en un
+           panel de monitoreo. Las esquinas tipo "visor" y el logotipo Bodoni
+           Moda son el hilo conductor entre ambos modos, para que el cambio
+           de tema se sienta como una sola marca, no dos apps distintas.
    ========================================================================== */
 
-/* --- Tokens: modo claro ------------------------------------------------- */
+/* --- Tokens: modo claro (magenta + verde suave) ---------------------------- */
 :root {
-    --verde-campo: #E3F4E5;
-    --verde-hoja: #BFE3C6;
+    --magenta-suave: #F3DCE6;
+    --magenta-suave-2: #F8E8EE;
+    --verde-suave: #DCEFDD;
+    --verde-suave-2: #C9E6CC;
+
     --verde-profundo: #1E4432;
     --verde-medio: #2F6B4F;
+    --magenta-profundo: #8C2F63;
+    --magenta-oscuro: #5C1D46;
+    --dorado-suave: #B08D2B;
 
-    --terracota: #D9432A;
-    --magenta: #A61452;
-
-    --crema: #FBF3EA;
-    --blush: #F5E4DD;
+    --crema: #FDF7F9;
+    --superficie-alt: #E6F3E8;
 
     --ink: #1E2A22;
     --ink-suave: #55695E;
-    --borde-color: #D8E9DA;
+    --borde-color: #E3D3DA;
 
     --exito-bg: #E7F5EA;
     --error-bg: #FDECEA;
 
-    --fondo-app: radial-gradient(circle at 12% -10%, var(--verde-hoja) 0%, transparent 55%),
-                 linear-gradient(180deg, var(--verde-campo) 0%, #EFF8EF 100%);
+    --fondo-app:
+        radial-gradient(circle at 15% -8%, var(--magenta-suave) 0%, transparent 55%),
+        radial-gradient(circle at 85% 105%, var(--verde-suave) 0%, transparent 55%),
+        linear-gradient(180deg, var(--magenta-suave-2) 0%, #FFFFFF 100%);
+
     --superficie: var(--crema);
-    --superficie-alt: var(--blush);
     --texto: var(--ink);
     --texto-suave: var(--ink-suave);
 
-    --grad-primario: linear-gradient(135deg, var(--terracota) 0%, var(--magenta) 100%);
+    --grad-primario: linear-gradient(135deg, var(--magenta-profundo) 0%, var(--magenta-oscuro) 100%);
     --grad-exito: linear-gradient(135deg, var(--verde-medio) 0%, var(--verde-profundo) 100%);
-    --grad-oscuro: linear-gradient(135deg, #3E4C46 0%, #16241C 100%);
+    --grad-oscuro: linear-gradient(135deg, #4A3A42 0%, #1E1620 100%);
 
-    --sombra: 0 10px 30px rgba(30, 68, 50, 0.14);
-    --sombra-suave: 0 2px 10px rgba(30, 68, 50, 0.08);
+    --sombra: 0 10px 30px rgba(90, 40, 70, 0.14);
+    --sombra-suave: 0 2px 10px rgba(90, 40, 70, 0.08);
+
+    --anillo-enfoque: rgba(140, 47, 99, 0.18);
+    --borde-enfoque: var(--magenta-profundo);
+    --color-esquina: rgba(30, 68, 50, 0.55);
+    --glow-esquina: none;
 
     --radio: 14px;
     --radio-chico: 8px;
@@ -46,31 +59,48 @@
     --fuente-ticket: 'JetBrains Mono', ui-monospace, Consolas, monospace;
 }
 
-/* --- Tokens: modo oscuro -------------------------------------------------- */
+/* --- Tokens: modo oscuro (consola / HUD) ------------------------------------ */
 [data-theme="dark"] {
-    --fondo-app: radial-gradient(circle at 12% -10%, #1E3A2A 0%, transparent 55%),
-                 linear-gradient(180deg, #0D1B13 0%, #0A140E 100%);
-    --superficie: #172A1E;
-    --superficie-alt: #1E3225;
-    --texto: #E9F3EA;
-    --texto-suave: #9FB8A8;
-    --borde-color: #294436;
-    --sombra: 0 10px 30px rgba(0, 0, 0, 0.45);
-    --sombra-suave: 0 2px 10px rgba(0, 0, 0, 0.3);
-    --exito-bg: #16311F;
-    --error-bg: #3A1A1A;
+    --bg-oscuro: #080C0A;
+    --bg-oscuro-2: #0D1411;
+    --panel-oscuro: #0F1613;
+    --panel-oscuro-alt: #101A15;
+
+    --neon-verde: #3CFFA0;
+    --neon-cian: #55D6FF;
+    --neon-dorado: #E8B84B;
+
+    --texto: #E4FBEC;
+    --texto-suave: #5E7C6E;
+    --borde-color: rgba(60, 255, 160, 0.28);
+
+    --exito-bg: rgba(60, 255, 160, 0.08);
+    --error-bg: rgba(255, 90, 90, 0.1);
+
+    --fondo-app:
+        radial-gradient(circle at 15% -10%, rgba(60, 255, 160, 0.09) 0%, transparent 50%),
+        radial-gradient(circle at 85% 110%, rgba(85, 214, 255, 0.07) 0%, transparent 50%),
+        linear-gradient(180deg, var(--bg-oscuro) 0%, var(--bg-oscuro-2) 100%);
+
+    --superficie: var(--panel-oscuro);
+    --superficie-alt: var(--panel-oscuro-alt);
+
+    --grad-primario: none;
+    --grad-exito: none;
+    --grad-oscuro: none;
+
+    --sombra: 0 0 24px rgba(60, 255, 160, 0.08);
+    --sombra-suave: 0 0 14px rgba(60, 255, 160, 0.06);
+
+    --anillo-enfoque: rgba(60, 255, 160, 0.25);
+    --borde-enfoque: var(--neon-verde);
+    --color-esquina: var(--neon-verde);
+    --glow-esquina: drop-shadow(0 0 5px rgba(60, 255, 160, 0.55));
 }
 
-/* --- Reset base ------------------------------------------------------------ */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-html {
-    color-scheme: light dark;
-}
+/* --- Reset base -------------------------------------------------------------- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { color-scheme: light dark; }
 
 body {
     font-family: var(--fuente-cuerpo);
@@ -80,18 +110,70 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color 0.35s ease, color 0.35s ease;
+}
+
+body,
+.card,
+.login-container,
+header,
+.btn,
+.aforo-box,
+.ticket-view,
+.form-group input,
+.form-group select,
+.theme-toggle,
+.logout-btn {
+    transition: background-color 0.35s ease, border-color 0.35s ease,
+                box-shadow 0.35s ease, color 0.35s ease, filter 0.15s ease,
+                transform 0.15s ease;
 }
 
 .hidden { display: none !important; }
-
 a { color: inherit; }
 
-/* --- Masthead editorial (elemento firma) ----------------------------------- */
-.masthead {
-    text-align: center;
-    margin-bottom: 28px;
+/* --- Marco "visor" de esquinas: el hilo conductor entre ambos modos --------- */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 14px;
+    pointer-events: none;
+    z-index: 9999;
+    filter: var(--glow-esquina);
+    background-repeat: no-repeat;
+    background-image:
+        linear-gradient(var(--color-esquina), var(--color-esquina)),
+        linear-gradient(var(--color-esquina), var(--color-esquina)),
+        linear-gradient(var(--color-esquina), var(--color-esquina)),
+        linear-gradient(var(--color-esquina), var(--color-esquina)),
+        linear-gradient(var(--color-esquina), var(--color-esquina)),
+        linear-gradient(var(--color-esquina), var(--color-esquina)),
+        linear-gradient(var(--color-esquina), var(--color-esquina)),
+        linear-gradient(var(--color-esquina), var(--color-esquina));
+    background-size:
+        2px 22px, 22px 2px,
+        2px 22px, 22px 2px,
+        2px 22px, 22px 2px,
+        2px 22px, 22px 2px;
+    background-position:
+        top left, top left,
+        top right, top right,
+        bottom left, bottom left,
+        bottom right, bottom right;
+    opacity: 0.9;
 }
+
+@keyframes pulso-esquina {
+    0%, 100% { opacity: 0.75; }
+    50% { opacity: 1; }
+}
+
+[data-theme="dark"] body::before {
+    animation: pulso-esquina 4s ease-in-out infinite;
+}
+
+/* --- Masthead editorial (se mantiene igual en ambos modos: es la marca) ----- */
+.masthead { text-align: center; margin-bottom: 28px; }
 
 .kicker {
     display: block;
@@ -104,6 +186,11 @@ a { color: inherit; }
     margin-bottom: 10px;
 }
 
+[data-theme="dark"] .kicker {
+    color: var(--neon-verde);
+    text-shadow: 0 0 6px rgba(60, 255, 160, 0.45);
+}
+
 .wordmark {
     font-family: var(--fuente-masthead);
     font-size: clamp(2.4rem, 6vw, 3.4rem);
@@ -111,6 +198,11 @@ a { color: inherit; }
     letter-spacing: 0.02em;
     color: var(--verde-profundo);
     line-height: 1;
+}
+
+[data-theme="dark"] .wordmark {
+    color: var(--texto);
+    text-shadow: 0 0 14px rgba(60, 255, 160, 0.28);
 }
 
 .rule-doble {
@@ -121,21 +213,14 @@ a { color: inherit; }
     border-bottom: 1px solid var(--verde-profundo);
 }
 
-.masthead-sub {
-    margin-top: 14px;
-    font-size: 13px;
-    color: var(--texto-suave);
-    letter-spacing: 0.03em;
+[data-theme="dark"] .rule-doble {
+    border-top-color: var(--neon-verde);
+    border-bottom-color: var(--neon-verde);
 }
 
-/* Masthead compacto, usado dentro del header de la app */
-.masthead--compacta {
-    display: flex;
-    align-items: baseline;
-    gap: 12px;
-    margin: 0;
-    text-align: left;
-}
+.masthead-sub { margin-top: 14px; font-size: 13px; color: var(--texto-suave); letter-spacing: 0.03em; }
+
+.masthead--compacta { display: flex; align-items: baseline; gap: 12px; margin: 0; text-align: left; }
 
 .wordmark--chico {
     font-family: var(--fuente-masthead);
@@ -154,7 +239,7 @@ a { color: inherit; }
     opacity: 0.85;
 }
 
-/* --- Vista de Login --------------------------------------------------------- */
+/* --- Vista de Login ----------------------------------------------------------- */
 .login-container {
     width: 100%;
     max-width: 400px;
@@ -167,12 +252,17 @@ a { color: inherit; }
     animation: aparecer 0.5s ease-out;
 }
 
+[data-theme="dark"] .login-container {
+    border: 1px solid var(--borde-color);
+    border-top: 1px solid var(--borde-color);
+}
+
 @keyframes aparecer {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* --- Header de la aplicación ------------------------------------------------ */
+/* --- Header de la aplicación --------------------------------------------------- */
 header {
     background: linear-gradient(120deg, var(--verde-profundo) 0%, var(--verde-medio) 100%);
     color: #F3FBF4;
@@ -184,16 +274,16 @@ header {
     align-items: center;
 }
 
-.header-actions {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+[data-theme="dark"] header {
+    background: var(--panel-oscuro);
+    color: var(--texto);
+    border-bottom: 1px solid var(--borde-color);
 }
 
-.user-display {
-    font-weight: 600;
-    font-size: 14px;
-}
+.header-actions { display: flex; align-items: center; gap: 12px; }
+.user-display { font-weight: 600; font-size: 14px; }
+
+[data-theme="dark"] .user-display { font-family: var(--fuente-ticket); font-size: 12.5px; color: var(--texto-suave); }
 
 .theme-toggle {
     background: rgba(255, 255, 255, 0.16);
@@ -206,14 +296,15 @@ header {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
-.theme-toggle:hover {
-    background: rgba(255, 255, 255, 0.28);
-    transform: translateY(-1px);
+[data-theme="dark"] .theme-toggle {
+    background: rgba(60, 255, 160, 0.08);
+    border: 1px solid var(--borde-color);
+    color: var(--neon-verde);
 }
 
+.theme-toggle:hover { transform: translateY(-1px); filter: brightness(1.15); }
 .theme-toggle svg { width: 18px; height: 18px; }
 
 .icon-luna { display: none; }
@@ -230,12 +321,17 @@ header {
     font-family: var(--fuente-cuerpo);
     font-weight: 600;
     font-size: 13px;
-    transition: background-color 0.2s ease;
 }
 
-.logout-btn:hover { background: rgba(255, 255, 255, 0.3); }
+[data-theme="dark"] .logout-btn {
+    background: transparent;
+    border: 1px solid var(--borde-color);
+    color: var(--texto-suave);
+}
 
-/* --- Layout principal -------------------------------------------------------- */
+[data-theme="dark"] .logout-btn:hover { border-color: var(--neon-verde); color: var(--neon-verde); }
+
+/* --- Layout principal ----------------------------------------------------------- */
 .main-layout {
     display: grid;
     grid-template-columns: 1fr;
@@ -246,9 +342,7 @@ header {
     margin: 0 auto;
 }
 
-@media (min-width: 960px) {
-    .main-layout { grid-template-columns: 1fr 1.6fr; }
-}
+@media (min-width: 960px) { .main-layout { grid-template-columns: 1fr 1.6fr; } }
 
 .card {
     background: var(--superficie);
@@ -256,8 +350,12 @@ header {
     border-radius: var(--radio);
     box-shadow: var(--sombra-suave);
     margin-bottom: 20px;
-    border-top: 3px solid var(--verde-hoja);
-    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    border-top: 3px solid var(--verde-suave-2, var(--verde-medio));
+}
+
+[data-theme="dark"] .card {
+    border: 1px solid var(--borde-color);
+    border-top: 1px solid var(--borde-color);
 }
 
 .card:hover { box-shadow: var(--sombra); }
@@ -273,17 +371,24 @@ header {
     letter-spacing: 0.01em;
 }
 
-[data-theme="dark"] .card h3 { color: var(--texto); }
+[data-theme="dark"] .card h3 {
+    color: var(--neon-verde);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 13px;
+    text-shadow: 0 0 6px rgba(60, 255, 160, 0.35);
+}
 
-/* --- Formularios ------------------------------------------------------------- */
+/* --- Formularios ----------------------------------------------------------------- */
 .form-group { margin-bottom: 15px; }
 
-.form-group label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: 600;
-    font-size: 13px;
-    color: var(--texto-suave);
+.form-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 13px; color: var(--texto-suave); }
+
+[data-theme="dark"] .form-group label {
+    font-family: var(--fuente-ticket);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
 }
 
 .form-group input,
@@ -296,42 +401,37 @@ header {
     color: var(--texto);
     font-family: var(--fuente-cuerpo);
     font-size: 14px;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+[data-theme="dark"] .form-group input,
+[data-theme="dark"] .form-group select {
+    background: var(--bg-oscuro);
+    font-family: var(--fuente-ticket);
 }
 
 .form-group input:focus,
 .form-group select:focus {
     outline: none;
-    border-color: var(--magenta);
-    box-shadow: 0 0 0 3px rgba(166, 20, 82, 0.15);
+    border-color: var(--borde-enfoque);
+    box-shadow: 0 0 0 3px var(--anillo-enfoque);
 }
 
-.form-grid-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-}
-
-.form-grid-1-2 {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 10px;
-}
+.form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.form-grid-1-2 { display: grid; grid-template-columns: 1fr 2fr; gap: 10px; }
 
 @media (max-width: 640px) {
-    .form-grid-2,
-    .form-grid-1-2 { grid-template-columns: 1fr; }
+    .form-grid-2, .form-grid-1-2 { grid-template-columns: 1fr; }
 }
 
-.sunarp-msg {
-    color: var(--verde-medio);
-    font-size: 12.5px;
-    font-weight: 700;
-    margin-bottom: 12px;
-    min-height: 16px;
+.sunarp-msg { color: var(--verde-medio); font-size: 12.5px; font-weight: 700; margin-bottom: 12px; min-height: 16px; }
+
+[data-theme="dark"] .sunarp-msg {
+    font-family: var(--fuente-ticket);
+    color: var(--neon-cian);
+    text-shadow: 0 0 5px rgba(85, 214, 255, 0.4);
 }
 
-/* --- Botones ------------------------------------------------------------------ */
+/* --- Botones: claro = degradados sólidos; oscuro = fantasma con glow (HUD) ------- */
 .btn {
     width: 100%;
     padding: 13px;
@@ -344,7 +444,6 @@ header {
     color: #FFFFFF;
     background: var(--grad-primario);
     box-shadow: var(--sombra-suave);
-    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
 }
 
 .btn:hover { transform: translateY(-1px); filter: brightness(1.05); box-shadow: var(--sombra); }
@@ -353,61 +452,73 @@ header {
 .btn-success { background: var(--grad-exito); }
 .btn-dark { background: var(--grad-oscuro); }
 
-/* --- Indicadores de aforo ------------------------------------------------------ */
-.aforo-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    text-align: center;
-}
-
-.aforo-box {
-    padding: 14px 8px;
-    border-radius: var(--radio-chico);
-    background: var(--superficie-alt);
-    border-left: 5px solid var(--verde-profundo);
-}
-
-.aforo-box.camion { border-left-color: var(--terracota); }
-.aforo-box.trailer { border-left-color: var(--magenta); }
-
-.aforo-box h4 {
-    font-size: 11px;
+[data-theme="dark"] .btn {
+    background: rgba(60, 255, 160, 0.06);
+    border: 1px solid var(--neon-verde);
+    color: var(--neon-verde);
+    font-family: var(--fuente-ticket);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
+    font-size: 13px;
+    box-shadow: 0 0 16px rgba(60, 255, 160, 0.18);
+}
+
+[data-theme="dark"] .btn:hover {
+    background: rgba(60, 255, 160, 0.14);
+    box-shadow: 0 0 22px rgba(60, 255, 160, 0.32);
+}
+
+[data-theme="dark"] .btn-success {
+    border-color: var(--neon-cian);
+    color: var(--neon-cian);
+    box-shadow: 0 0 16px rgba(85, 214, 255, 0.18);
+}
+
+[data-theme="dark"] .btn-success:hover { box-shadow: 0 0 22px rgba(85, 214, 255, 0.32); }
+
+[data-theme="dark"] .btn-dark {
+    border-color: var(--texto-suave);
     color: var(--texto-suave);
+    box-shadow: none;
 }
 
-.aforo-box p {
-    font-size: clamp(1.1rem, 4vw, 1.4rem);
-    font-weight: 800;
-    margin-top: 6px;
-    color: var(--texto);
-}
+[data-theme="dark"] .btn-dark:hover { border-color: var(--texto); color: var(--texto); }
 
-/* --- Ticket / comprobante -------------------------------------------------------- */
+/* --- Indicadores de aforo ---------------------------------------------------------- */
+.aforo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; }
+
+.aforo-box { padding: 14px 8px; border-radius: var(--radio-chico); background: var(--superficie-alt); border-left: 5px solid var(--verde-profundo); }
+
+.aforo-box.camion { border-left-color: var(--magenta-profundo); }
+.aforo-box.trailer { border-left-color: var(--dorado-suave); }
+
+[data-theme="dark"] .aforo-box { border: 1px solid var(--borde-color); border-left: 3px solid var(--neon-verde); }
+[data-theme="dark"] .aforo-box.camion { border-left-color: var(--neon-cian); }
+[data-theme="dark"] .aforo-box.trailer { border-left-color: var(--neon-dorado); }
+
+.aforo-box h4 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--texto-suave); }
+
+.aforo-box p { font-size: clamp(1.1rem, 4vw, 1.4rem); font-weight: 800; margin-top: 6px; color: var(--texto); }
+
+[data-theme="dark"] .aforo-box p { font-family: var(--fuente-ticket); text-shadow: 0 0 6px rgba(60, 255, 160, 0.3); }
+
+/* --- Ticket / comprobante ------------------------------------------------------------- */
 .ticket-view {
     background: var(--superficie-alt);
-    border: 1px dashed var(--terracota);
+    border: 1px dashed var(--magenta-profundo);
     padding: 16px;
     border-radius: var(--radio-chico);
     font-family: var(--fuente-ticket);
     font-size: 13px;
 }
 
-.ticket-header {
-    text-align: center;
-    font-weight: 700;
-    margin-bottom: 8px;
-    letter-spacing: 0.02em;
-}
+[data-theme="dark"] .ticket-view { border: 1px dashed var(--borde-color); }
 
-.ticket-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    margin-bottom: 6px;
-}
+.ticket-header { text-align: center; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.02em; }
+
+[data-theme="dark"] .ticket-header { color: var(--neon-verde); text-transform: uppercase; letter-spacing: 0.08em; }
+
+.ticket-row { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
 
 .ticket-row--total {
     font-weight: 800;
@@ -417,46 +528,42 @@ header {
     margin-top: 4px;
 }
 
-[data-theme="dark"] .ticket-row--total { color: var(--texto); }
+[data-theme="dark"] .ticket-row--total { color: var(--neon-verde); text-shadow: 0 0 6px rgba(60, 255, 160, 0.35); }
 
-.ticket-divisor {
-    border: none;
-    border-top: 1px dashed var(--borde-color);
-    margin: 8px 0;
-}
+.ticket-divisor { border: none; border-top: 1px dashed var(--borde-color); margin: 8px 0; }
 
-/* --- Alertas ---------------------------------------------------------------------- */
-.alert {
-    padding: 11px 14px;
-    border-radius: var(--radio-chico);
-    margin-bottom: 15px;
-    font-size: 13.5px;
-    font-weight: 700;
-}
+/* --- Alertas --------------------------------------------------------------------------- */
+.alert { padding: 11px 14px; border-radius: var(--radio-chico); margin-bottom: 15px; font-size: 13.5px; font-weight: 700; }
 
 .alert-danger { background: var(--error-bg); color: #C0392B; border: 1px solid rgba(192, 57, 43, 0.25); }
 .alert-success { background: var(--exito-bg); color: var(--verde-profundo); border: 1px solid rgba(30, 68, 50, 0.2); }
 
-[data-theme="dark"] .alert-danger { color: #FF8A80; }
-[data-theme="dark"] .alert-success { color: #A8E6B4; }
+[data-theme="dark"] .alert-danger {
+    color: #FF8A80;
+    border: 1px solid rgba(255, 90, 90, 0.35);
+    box-shadow: 0 0 12px rgba(255, 90, 90, 0.12);
+    font-family: var(--fuente-ticket);
+}
 
-/* --- Accesibilidad y detalles finales ---------------------------------------------- */
-button:focus-visible,
-input:focus-visible,
-select:focus-visible,
-a:focus-visible {
-    outline: 2px solid var(--magenta);
+[data-theme="dark"] .alert-success {
+    color: var(--neon-verde);
+    border: 1px solid rgba(60, 255, 160, 0.35);
+    box-shadow: 0 0 12px rgba(60, 255, 160, 0.14);
+    font-family: var(--fuente-ticket);
+}
+
+/* --- Accesibilidad y detalles finales ---------------------------------------------------- */
+button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible {
+    outline: 2px solid var(--borde-enfoque);
     outline-offset: 2px;
 }
 
 @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-        animation-duration: 0.001ms !important;
-        transition-duration: 0.001ms !important;
-    }
+    *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
 }
 
 @media (max-width: 480px) {
+    body::before { inset: 8px; }
     .login-container { padding: 32px 22px; }
     header { padding: 14px 16px; }
     .main-layout { padding: 14px; gap: 14px; }
