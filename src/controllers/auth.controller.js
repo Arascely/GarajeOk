@@ -1,64 +1,51 @@
-// src/controllers/auth.controller.js
-const { pool } = require('../config/database');
-const { login } = require('../services/login.service');
+// Añadir al final de src/controllers/auth.controller.js
+const { validarPoliticaPassword } = require('../services/auth.service');
+const bcrypt = require('bcryptjs');
 
-/**
- * Endpoint para autenticar operadores y administradores.
- * POST /api/auth/login
- */
-async function iniciarSesion(req, res) {
-    const { username, password } = req.body;
+async function registrarUsuario(req, res) {
+    const { username, password, email, nombres, apellidos } = req.body;
 
-    if (!username || !password) {
-        return res.status(400).json({ error: "Debe ingresar usuario y contraseña" });
+    if (!username || !password || !email || !nombres || !apellidos) {
+        return res.status(400).json({ error: "Todos los campos son obligatorios." });
+    }
+
+    // 1. Validar la política de seguridad (Mínimo una mayúscula y un número)
+    const validacionClave = validarPoliticaPassword(password);
+    if (!validacionClave.valida) {
+        return res.status(400).json({ error: validacionClave.mensaje });
     }
 
     try {
-        // 1. Buscar al usuario en la base de datos de Neon
-        const queryUsuario = `
-            SELECT id, username, password_hash as "passwordHash", nombres, apellidos, rol 
-            FROM Usuarios 
-            WHERE username = $1 AND activo = TRUE
+        // 2. Verificar si el usuario o correo ya existen en Neon/Supabase
+        const existeUser = await pool.query('SELECT id FROM Usuarios WHERE username = $1 OR email = $2', [username, email]);
+        if (existeUser.rows.length > 0) {
+            return res.status(400).json({ error: "El nombre de usuario o correo ya están registrados." });
+        }
+
+        // 3. Encriptar la contraseña personalizada elegida por el usuario
+        const salt = bcrypt.genSaltSync(10);
+        const nuevoHash = bcrypt.hashSync(password, salt);
+
+        // 4. Insertar en la base de datos con estado pendiente de verificación
+        const queryInsert = `
+            INSERT INTO Usuarios (username, password_hash, email, nombres, apellidos, rol, activo, email_verificado)
+            VALUES ($1, $2, $3, $4, $5, 'Operador', TRUE, FALSE) RETURNING id, email
         `;
-        const resUsuario = await pool.query(queryUsuario, [username]);
+        const nuevoUsuario = await pool.query(queryInsert, [username, nuevoHash, email, nombres, apellidos]);
 
-        if (resUsuario.rows.length === 0) {
-            return res.status(401).json({ error: "Usuario o contraseña incorrectos" });
-        }
-
-        const usuario = resUsuario.rows[0];
-
-        // 2. Usar tu servicio de login testeado (TDD) para validar
-        const resultadoLogin = login(usuario, password);
-
-        if (!resultadoLogin.exito) {
-            return res.status(401).json({ error: resultadoLogin.mensaje });
-        }
-
-        // 3. Registrar el último acceso en la base de datos (Auditoría)
-        await pool.query(
-            'UPDATE Usuarios SET ultimo_acceso = CURRENT_TIMESTAMP WHERE id = $1',
-            [usuario.id]
-        );
-
-        // 4. Retornar el token y los datos de sesión del operador
-        res.status(200).json({
-            message: "¡Bienvenido a GarajeOk!",
-            token: resultadoLogin.token,
-            user: {
-                id: usuario.id,
-                username: usuario.username,
-                nombre: `${usuario.nombres} ${usuario.apellidos}`,
-                rol: usuario.rol
-            }
+        res.status(201).json({
+            message: "¡Registro exitoso! Se ha enviado un mensaje de confirmación a su correo para activar la cuenta.",
+            usuarioId: nuevoUsuario.rows[0].id
         });
 
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Error interno en el servidor de autenticación" });
+        res.status(500).json({ error: "Error interno al procesar el registro de usuario." });
     }
 }
 
+// Recuerda agregarlo a tus exportaciones al final del archivo:
 module.exports = {
-    iniciarSesion
+    iniciarSesion,
+    registrarUsuario
 };
