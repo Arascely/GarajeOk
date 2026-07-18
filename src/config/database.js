@@ -15,11 +15,11 @@ const pool = new Pool({
 });
 
 pool.on('connect', () => {
-    console.log('✅ Conectado exitosamente a PostgreSQL en Neon');
+    console.log('Conectado exitosamente a PostgreSQL en Neon');
 });
 
 pool.on('error', (err) => {
-    console.error('❌ Error inesperado en el pool de base de datos:', err);
+    console.error('Error inesperado en el pool de base de datos:', err);
 });
 
 module.exports = {

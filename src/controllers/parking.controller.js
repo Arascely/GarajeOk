@@ -93,6 +93,78 @@ async function registrarIngreso(req, res) {
     }
 }
 
+
+// Añadir al final de src/controllers/parking.controller.js
+async function registrarSalida(req, res) {
+    const { placa } = req.body;
+
+    if (!placa) {
+        return res.status(400).json({ error: "Debe proporcionar la placa del vehículo." });
+    }
+
+    try {
+        // 1. Buscar el registro de estacionamiento activo para esa placa
+        const queryActivo = `
+            SELECT h.id as registro_id, h.hora_ingreso, h.espacio_id, v.tipo_vehiculo 
+            FROM HechosEstacionamiento h
+            JOIN Vehiculos v ON h.vehiculo_id = v.id
+            WHERE v.placa = $1 AND h.estado = 'Activo'
+        `;
+        const resActivo = await pool.query(queryActivo, [placa]);
+
+        if (resActivo.rows.length === 0) {
+            return res.status(404).json({ error: "No se encontró ningún vehículo estacionado con esa placa." });
+        }
+
+        const registro = resActive = resActivo.rows[0];
+
+        // 2. Calcular minutos transcurridos en tiempo real
+        const horaIngreso = new Date(registro.hora_ingreso);
+        const horaSalida = new Date();
+        const diferenciaMilifrase = horaSalida - horaIngreso;
+        const minutosEstadia = Math.ceil(diferenciaMilifrase / (1000 * 60)); // Convertir ms a minutos
+
+        // Tarifa hardcodeada temporal para la entrega (Carro: Hora 5 / Día 40)
+        const tarifaHora = registro.tipo_vehiculo === 'carro' ? 5.00 : 10.00;
+        const tarifaDia = registro.tipo_vehiculo === 'carro' ? 40.00 : 80.00;
+
+        // 3. Usar tu servicio de facturación testeado bajo TDD
+        const liquidacion = calcularMontoTarifa(minutosEstadia, tarifaHora, tarifaDia);
+
+        // 4. Actualizar HechosEstacionamiento (Cierre de estado)
+        await pool.query(
+            'UPDATE HechosEstacionamiento SET hora_salida = CURRENT_TIMESTAMP, monto_total = $1, estado = \'Finalizado\' WHERE id = $2',
+            [liquidacion.total, registro.registro_id]
+        );
+
+        // 5. Liberar el espacio físico en el garaje
+        await pool.query('UPDATE EspaciosParking SET estado = \'Disponible\' WHERE id = $1', [registro.espacio_id]);
+
+        // 6. Actualizar el Ticket de Estacionamiento
+        const updateTicket = `
+            UPDATE TicketsEstacionamiento 
+            SET fecha_salida = CURRENT_TIMESTAMP, monto_subtotal = $1, monto_igv = $2, monto_total = $3, estado_ticket = 'Pagado'
+            WHERE registro_id = $4 RETURNING *
+        `;
+        const ticketActualizado = await pool.query(updateTicket, [
+            liquidacion.subtotal, liquidacion.igv, liquidacion.total, registro.registro_id
+        ]);
+
+        res.status(200).json({
+            message: "Salida registrada y procesada con éxito",
+            tiempoEstadia: `${minutosEstadia} minutos`,
+            detallesCobro: liquidacion,
+            ticket: ticketActualizado.rows[0]
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Error interno al procesar la salida del vehículo." });
+    }
+}
+
 module.exports = {
-    registrarIngreso
+    registrarIngreso,
+    registrarSalida
 };
+

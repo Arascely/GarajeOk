@@ -4,7 +4,7 @@ const router = express.Router();
 const parkingController = require('../controllers/parking.controller');
 const { obligarAutenticacion } = require('../middlewares/auth.middleware');
 
-// Ahora la ruta POST exige pasar el token JWT antes de permitir registrar un ingreso
 router.post('/ingreso', obligarAutenticacion, parkingController.registrarIngreso);
+router.post('/salida', obligarAutenticacion, parkingController.registrarSalida); // Ruta de salida protegida
 
 module.exports = router;
