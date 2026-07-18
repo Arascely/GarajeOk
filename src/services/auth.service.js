@@ -32,7 +32,26 @@ function generarToken(usuario) {
     );
 }
 
+* Debe contener al menos una letra mayúscula y al menos un número.
+ * @param {string} password 
+ * @returns {object} { valida: boolean, mensaje: string }
+ */
+function validarPoliticaPassword(password) {
+    const tieneMayuscula = /[A-Z]/.test(password);
+    const tieneNumero = /[0-9]/.test(password);
+
+    if (!tieneMayuscula || !tieneNumero) {
+        return {
+            valida: false,
+            mensaje: "La contraseña es débil. Debe incluir al menos una letra mayúscula y un número."
+        };
+    }
+
+    return { valida: true, mensaje: "Contraseña segura" };
+}
+
 module.exports = {
     verificarPassword,
-    generarToken
+    generarToken,
+    validarPoliticaPassword 
 };
