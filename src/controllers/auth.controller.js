@@ -2,10 +2,6 @@
 const { pool } = require('../config/database');
 const { login } = require('../services/login.service');
 
-/**
- * Endpoint para autenticar operadores y administradores.
- * POST /api/auth/login
- */
 async function iniciarSesion(req, res) {
     const { username, password } = req.body;
 
@@ -14,7 +10,6 @@ async function iniciarSesion(req, res) {
     }
 
     try {
-        // 1. Buscar al usuario en la base de datos de Neon
         const queryUsuario = `
             SELECT id, username, password_hash as "passwordHash", nombres, apellidos, rol 
             FROM Usuarios 
@@ -27,21 +22,19 @@ async function iniciarSesion(req, res) {
         }
 
         const usuario = resUsuario.rows[0];
-
-        // 2. Usar tu servicio de login testeado (TDD) para validar
         usuario.passwordHash = usuario.passwordHash || usuario.password_hash;
+
         const resultadoLogin = login(usuario, password);
+
         if (!resultadoLogin.exito) {
             return res.status(401).json({ error: resultadoLogin.mensaje });
         }
 
-        // 3. Registrar el último acceso en la base de datos (Auditoría)
         await pool.query(
             'UPDATE Usuarios SET ultimo_acceso = CURRENT_TIMESTAMP WHERE id = $1',
             [usuario.id]
         );
 
-        // 4. Retornar el token y los datos de sesión del operador
         res.status(200).json({
             message: "¡Bienvenido a GarajeOk!",
             token: resultadoLogin.token,
@@ -54,7 +47,7 @@ async function iniciarSesion(req, res) {
         });
 
     } catch (error) {
-        console.error(error);
+        console.error("ERROR CRÍTICO EN LOGIN:", error.message);
         res.status(500).json({ error: "Error interno en el servidor de autenticación" });
     }
 }

@@ -32,7 +32,7 @@ function generarToken(usuario) {
     );
 }
 
-* Debe contener al menos una letra mayúscula y al menos un número.
+/* Debe contener al menos una letra mayúscula y al menos un número.
  * @param {string} password 
  * @returns {object} { valida: boolean, mensaje: string }
  */

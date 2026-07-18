@@ -14,7 +14,7 @@ describe('TDD - Módulo de Login (GarajeOk)', () => {
     };
 
     test('Verde: Debe generar token si la contraseña es correcta usando hash estático', () => {
-        const resultado = login(usuarioMock, 'admin123');
+        const resultado = login (usuarioMock, 'admin123');
 
         expect(resultado.exito).toBe(true);
         expect(resultado.token).toBeDefined();
