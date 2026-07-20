@@ -12,7 +12,7 @@ const parkingRoutes = require('./src/routes/parking.routes');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// 📝 Middleware de OpenSpec para contratos de datos de la API
+// Middleware de OpenSpec para contratos de datos de la API
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use(express.json());
@@ -46,8 +46,8 @@ console.log("Endpoints registrados en el Gateway:");
 console.log(listEndpoints(app));
 
 app.listen(PORT, () => {
-    console.log(`\n🚀 Servidor Core SaaS corriendo en http://localhost:${PORT}`);
-    console.log(`📝 Documentación OpenSpec disponible en http://localhost:${PORT}/api-docs\n`);
+    console.log(`\nServidor Core SaaS corriendo en http://localhost:${PORT}`);
+    console.log(` Documentación OpenSpec disponible en http://localhost:${PORT}/api-docs\n`);
 });
 
 module.exports = app;
