@@ -1,0 +1,87 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "GarajeOk API Gateway",
+    "version": "1.0.0",
+    "description": "Especificación formal de endpoints (OpenSpec) para el ecosistema SaaS Multi-Tenant"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api",
+      "description": "Servidor Local de Desarrollo"
+    }
+  ],
+  "paths": {
+    "/auth/registro": {
+      "post": {
+        "summary": "Registra un nuevo Tenant empresarial y crea su administrador",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["username", "password", "email", "nombres", "apellidos", "empresa_nombre", "empresa_ruc"],
+                "properties": {
+                  "username": { "type": "string" },
+                  "password": { "type": "string", "description": "Debe incluir al menos una mayúscula y un número" },
+                  "email": { "type": "string", "format": "email" },
+                  "nombres": { "type": "string" },
+                  "apellidos": { "type": "string" },
+                  "empresa_nombre": { "type": "string" },
+                  "empresa_ruc": { "type": "string", "minLength": 11, "maxLength": 11, "example": "20123456789" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Infraestructura SaaS e inventario base inicializados con éxito"
+          },
+          "400": {
+            "description": "Formato de RUC inválido, contraseña débil o usuario duplicado"
+          }
+        }
+      }
+    },
+    "/parking/ingreso": {
+      "post": {
+        "summary": "Registra el ingreso transaccional de un vehículo bajo aislamiento multi-tenant",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["cliente_documento", "placa", "tipo_vehiculo", "espacio_codigo"],
+                "properties": {
+                  "cliente_documento": { "type": "string", "example": "77654321", "description": "Strictly 8 digits (DNI)" },
+                  "placa": { "type": "string", "example": "ABC-123" },
+                  "tipo_vehiculo": { "type": "string", "example": "carro" },
+                  "espacio_codigo": { "type": "string", "example": "A1" },
+                  "tiene_llave": { "type": "boolean", "default": false }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Ingreso registrado de forma segura y ticket emitido" },
+          "400": { "description": "Aforo agotado, espacio duplicado o formato de inputs inválido" },
+          "401": { "description": "No autorizado. Token inválido o expirado" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
