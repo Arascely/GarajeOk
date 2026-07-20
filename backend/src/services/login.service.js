@@ -3,10 +3,11 @@ const { verificarPassword, generarToken } = require('./auth.service');
 
 /**
  * Orquesta el flujo de login: valida contraseña y, si es correcta,
- * genera el token. Si falla, no llega a generar nada.
- * @param {object} usuario - Datos del usuario incluyendo el hash guardado ({ id, username, rol, passwordHash })
- * @param {string} passwordIngresada - Contraseña en texto plano ingresada por el usuario
- * @returns {object} { exito: boolean, token?: string, mensaje?: string }
+ * genera el token. No accede a la base de datos — recibe el usuario
+ * ya consultado desde el controller.
+ * @param {object} usuario - { id, username, rol, passwordHash }
+ * @param {string} passwordIngresada - Contraseña en texto plano
+ * @returns {object} { exito, token?, mensaje? }
  */
 function login(usuario, passwordIngresada) {
     const esValida = verificarPassword(passwordIngresada, usuario.passwordHash);
@@ -18,7 +19,6 @@ function login(usuario, passwordIngresada) {
         };
     }
 
-    // Solo si la contraseña coincide, corre el código que ya tenías
     const token = generarToken({
         id: usuario.id,
         username: usuario.username,
